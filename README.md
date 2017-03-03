@@ -11,43 +11,66 @@ Prior:
 * http://stackoverflow.com/questions/6024108/export-a-create-script-for-a-database-from-pgadmin
 
 Usage example: 
+```t=# drop table "aA";
+DROP TABLE
 t=# \pset format unaligned
 Output format is unaligned.
-t=# \pset format unaligned
-Output format is unaligned.
-t=# create table a (i bigserial primary key, a text, ts timestamptz default now(), c int check (c>3));
+t=# create table "aA" (i bigserial primary key, a text, ts timestamptz default now(), c int check (c>3), s smallserial, iarr int[], tarr text[]);
 CREATE TABLE
-t=# create unique index i on a(c);
+t=# create index i on "aA"(c);
+ERROR:  relation "i" already exists
+t=# create unique index uk on "aA"(c);
 CREATE INDEX
-t=# comment on table a is 'test table';
+t=# comment on table "aA" is 'test table';
 COMMENT
-t=# comment on column a.a is 'c1';
+t=# comment on column "aA".a is 'c1';
 COMMENT
-t=# comment on column a.c is 'c2';
+t=# comment on column "aA".c is 'c2';
 COMMENT
 t=# \o /dev/null
 t=# \i get_ddl_primitive/functions.sql
 t=# \o
-t=# select * from get_ddl_t('public','a');
+t=# select * from get_ddl_t('public','aA');
 get_ddl_t
-CREATE SEQUENCE public.a_i_seq
+--Sequences DDL:
+
+CREATE SEQUENCE public."aA_i_seq"
         START WITH 1
         INCREMENT BY 1
         MINVALUE 1
         MAXVALUE 9223372036854775807
         CACHE 1
 );
-CREATE TABLE public.a (
-        i bigint nextval('a_i_seq'::regclass) NOT NULL,
+CREATE SEQUENCE public."aA_s_seq"
+        START WITH 1
+        INCREMENT BY 1
+        MINVALUE 1
+        MAXVALUE 9223372036854775807
+        CACHE 1
+);
+
+
+--Table DDL:
+CREATE TABLE public."aA" (
+        i bigint nextval('"aA_i_seq"'::regclass) NOT NULL,
         a text ,
         ts timestamp with time zone now(),
-        c integer
+        c integer ,
+        s smallint nextval('"aA_s_seq"'::regclass) NOT NULL,
+        iarr integer[] ,
+        tarr text[]
 );
-COMMENT ON COLUMN a.a IS 'c1';
-COMMENT ON COLUMN a.c IS 'c2';
-COMMENT ON TABLE a is 'test table';
-ALTER TABLE ONLY a ADD CONSTRAINT a_pkey PRIMARY KEY (i);
-CREATE UNIQUE INDEX i ON a USING btree (c);
+
+--Columns Comments:
+COMMENT ON COLUMN aA.a IS 'c1';
+COMMENT ON COLUMN aA.c IS 'c2';
+
+--Table Comments:
+COMMENT ON TABLE "aA" is 'test table';
+
+--Indexes DDL:
+ALTER TABLE ONLY "aA" ADD CONSTRAINT "aA_pkey" PRIMARY KEY (i);
+CREATE UNIQUE INDEX uk ON "aA" USING btree (c);
 
 (1 row)
-
+```
