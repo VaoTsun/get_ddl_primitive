@@ -84,3 +84,23 @@ CREATE UNIQUE INDEX uk ON "aA" USING btree (c);
 
 (1 row)
 ```
+mind `\pset format unaligned` part to remove `+` on new line with aligned format
+
+#Multiple tables:
+```
+t=# select get_ddl_t(schemaname,tablename) as "--" from pg_tables where tableowner <> 'postgres';
+--|
+
+--Table DDL:
+CREATE TABLE public."sick.name" (
+        i integer
+);
+
+--|--Sequences DDL:
+
+CREATE SEQUENCE public."aA_i_seq"
+        START WITH 1
+...
+```
+the rest is cut...
+Mind `as "--"` in select  - to comment the result name, so it would not interfere with DDL generated
