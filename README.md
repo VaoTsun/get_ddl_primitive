@@ -11,7 +11,7 @@ Basics:
 * http://stackoverflow.com/questions/6024108/export-a-create-script-for-a-database-from-pgadmin
 
 # Supports
-  *
+* 2/3 of what `psql \d+` shows in execution ready format
   * Table itself
   * Sequences asigned to it
   * Indexes
