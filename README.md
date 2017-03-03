@@ -5,10 +5,19 @@ Basics:
 * pg_dump -s requires LOCK TABLE ... IN ACCESS SHARE MODE, so Eg. in AWS you can \d+ the table structure without being an owner, but can't pg_dump -s it to get DDL
 * never tested - comes as is
 
-Prior:
+# Inspired:
 * http://dba.stackexchange.com/questions/165612/user-can-select-all-structure-from-pg-catalog-but-cant-make-a-dump-s
 * http://stackoverflow.com/questions/1884758/generate-ddl-programmatically-on-postgresql
 * http://stackoverflow.com/questions/6024108/export-a-create-script-for-a-database-from-pgadmin
+
+# Supports
+* Table definition (2/3) of what psql \d+ gives
+..* Table itself
+..* Sequences asigned to it
+..* Indexes
+..* Constraints (not initially differed)
+..* Column comments
+..* Table comments
 
 #Usage example: 
 ```
