@@ -104,3 +104,61 @@ CREATE SEQUENCE public."aA_i_seq"
 ```
 the rest is cut...
 Mind `as "--"` in select  - to comment the result name, so it would not interfere with DDL generated
+
+#Ignoring errors:
+```
+t=> \pset format unaligned
+Output format is unaligned.
+t=> select get_ddl_t(schemaname,tablename,'{"handle exceptions":true}') as "--" from pg_tables where schemaname='public';
+INFO:  permission denied for relation t_user_us_us_id_seq
+CONTEXT:  SQL statement "select get_ddl_seq_tbl(_sn,_tn,_opt)"
+PL/pgSQL function get_ddl_t(text,text,json) line 14 at SQL statement
+INFO:  permission denied for relation a_i_seq
+CONTEXT:  SQL statement "select get_ddl_seq_tbl(_sn,_tn,_opt)"
+PL/pgSQL function get_ddl_t(text,text,json) line 14 at SQL statement
+INFO:  permission denied for relation t3_i_seq
+CONTEXT:  SQL statement "select get_ddl_seq_tbl(_sn,_tn,_opt)"
+PL/pgSQL function get_ddl_t(text,text,json) line 14 at SQL statement
+INFO:  permission denied for relation aA_i_seq
+CONTEXT:  SQL statement "select get_ddl_seq_tbl(_sn,_tn,_opt)"
+PL/pgSQL function get_ddl_t(text,text,json) line 14 at SQL statement
+INFO:  permission denied for relation aA_s_seq
+CONTEXT:  SQL statement "select get_ddl_seq_tbl(_sn,_tn,_opt)"
+PL/pgSQL function get_ddl_t(text,text,json) line 14 at SQL statement
+--
+--Sequences DDL:
+
+
+--Table DDL:
+CREATE TABLE public.t_user_us (
+        us_id integer nextval('t_user_us_us_id_seq'::regclass) NOT NULL,
+        us_name character varying(40)  NOT NULL,
+        us_salary integer  NOT NULL
+);
+
+--Table Comments:
+COMMENT ON TABLE t_user_us is 'table com';
+
+--Indexes DDL:
+ALTER TABLE ONLY t_user_us ADD CONSTRAINT t_user_us_pkey PRIMARY KEY (us_id);
+
+
+
+--Table DDL:
+CREATE TABLE public.feedbacks (
+        id integer ,
+        user_id text ,
+        email text ,
+        body text
+);
+--Sequences DDL:
+
+
+--Table DDL:
+CREATE TABLE public.a (
+        i bigint nextval('a_i_seq'::regclass) NOT NULL,
+        a text ,
+        ts timestamp with time zone now(),
+.......
+```
+
