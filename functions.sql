@@ -58,7 +58,7 @@ create or replace function get_ddl_idx_tbl (_sn text default 'public', _tn text 
 $$
 declare
  _oid bigint;
- _rtn text :='';
+ _rtn text;
  _seq text;
  _t text;
  _r record;
@@ -134,11 +134,11 @@ begin
     and relname = _tn
     order by 1 desc limit 1;
   
-  _rtn := concat('--Sequences DDL:',_seq);
+  _rtn := '--Sequences DDL:'||_seq; --we want to skip this line when no comments => no concat
   _rtn := concat(_rtn,chr(10),chr(10),'--Table DDL:',chr(10),format('CREATE TABLE %I.%I (',_sn,_tn),_columns,chr(10), ');');
-  _rtn := concat(_rtn,chr(10),chr(10),'--Columns Comments:',chr(10),_comments);
-  _rtn := concat(_rtn,chr(10),chr(10),'--Table Comments:',chr(10),format($f$COMMENT ON TABLE %I is '%s';$f$,_tn,_table_comments));
-  _rtn := concat(_rtn,chr(10),chr(10),'--Indexes DDL:',chr(10),_indices_ddl);
+  _rtn := concat(_rtn,(chr(10)||chr(10)||'--Columns Comments:'||chr(10)||_comments));
+  _rtn := concat(_rtn,(chr(10)||chr(10)||'--Table Comments:'||chr(10)||case when _table_comments is not null then format($f$COMMENT ON TABLE %I is '%s';$f$,_tn,_table_comments) end));
+  _rtn := concat(_rtn,(chr(10)||chr(10)||'--Indexes DDL:'||chr(10)||_indices_ddl));
 
   return _rtn;
 end;
