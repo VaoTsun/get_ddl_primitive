@@ -19,35 +19,36 @@ $$ language plpgsql
 create or replace function get_ddl_seq_tbl (_sn text default 'public', _tn text default '', _opt json default '{}') returns text as 
 $$
 declare
- _oid text;
  _rtn text;
- _seq text;
  _t text;
+ _r record;
 begin
-  select get_ddl_oid(_sn,_tn,_opt) into _oid;
-  SELECT d.objid::regclass into _seq
-  FROM   pg_depend    d
-  JOIN   pg_attribute a ON a.attrelid = d.refobjid AND a.attnum = d.refobjsubid
-  JOIN   pg_class c ON c.oid = d.objid
-  JOIN   pg_class r ON r.oid = d.refobjid
-  WHERE  d.refobjsubid > 0
-  AND    refobjid = _oid::bigint 
-  AND    deptype ='a'
-  AND    c.relkind = 'S'
-  ;
-  _t := format( 'CREATE SEQUENCE %s.%s', _sn, _seq); --using _sn here is wrong - sequence can be created in other schema than table
-  EXECUTE FORMAT($f$
-    SELECT concat(
-      %L
-      , chr(10),chr(9), 'START WITH ', start_value
-      , chr(10),chr(9), 'INCREMENT BY ', increment_by
-      , chr(10),chr(9), 'MINVALUE ', min_value
-      , chr(10),chr(9), 'MAXVALUE ', max_value
-      , chr(10),chr(9), 'CACHE ', cache_value
-      , chr(10),');'
-      ) 
-    FROM %s.%s$f$, _t, _sn, _seq)
-  into _rtn;
+  /*
+  https://www.postgresql.org/docs/current/static/functions-info.html
+  pg_get_serial_sequence(table_name, column_name) is the only pg_get_ f() using name instead of oid
+  need additional format for "weird.relation.names"
+  */
+  for _r in (
+    select pg_get_serial_sequence(format('%I',table_name),column_name) _seq
+    from information_schema.columns 
+    where table_name = _tn--format('%I',_tn)
+    and table_schema = _sn--format('%I',_sn)
+    and length(pg_get_serial_sequence(format('%I',table_name),column_name)) > 1
+  ) loop
+    EXECUTE FORMAT($f$
+      SELECT concat(
+        'CREATE SEQUENCE %s'
+        , chr(10),chr(9), 'START WITH ', start_value
+        , chr(10),chr(9), 'INCREMENT BY ', increment_by
+        , chr(10),chr(9), 'MINVALUE ', min_value
+        , chr(10),chr(9), 'MAXVALUE ', max_value
+        , chr(10),chr(9), 'CACHE ', cache_value
+        , chr(10),');',chr(10)
+        ) 
+      FROM %s$f$,_r._seq,_r._seq)
+    into _t;
+    _rtn := concat(chr(10),_rtn,_t);
+  end loop;
   return _rtn;
 end;
 $$ language plpgsql
@@ -95,8 +96,8 @@ declare
  _comments text;
  _table_comments text;
  _indices_ddl text;
- _rtn text;
- _oid text; --17896
+ _rtn text := '';
+ _oid text;
  _seq text;
 begin
   select get_ddl_oid(_sn,_tn,_opt) into _oid;
@@ -133,11 +134,11 @@ begin
     and relname = _tn
     order by 1 desc limit 1;
   
-  _rtn := concat(format('CREATE TABLE %I.%I (',_sn,_tn),_columns,chr(10), ');');
-  _rtn := concat(_seq,chr(10),_rtn);
-  _rtn := concat(_rtn,chr(10),_comments);
-  _rtn := concat(_rtn,chr(10),format($f$COMMENT ON TABLE %I is '%s';$f$,_tn,_table_comments));
-  _rtn := concat(_rtn,chr(10),_indices_ddl);
+  _rtn := concat('--Sequences DDL:',_seq);
+  _rtn := concat(_rtn,chr(10),chr(10),'--Table DDL:',chr(10),format('CREATE TABLE %I.%I (',_sn,_tn),_columns,chr(10), ');');
+  _rtn := concat(_rtn,chr(10),chr(10),'--Columns Comments:',chr(10),_comments);
+  _rtn := concat(_rtn,chr(10),chr(10),'--Table Comments:',chr(10),format($f$COMMENT ON TABLE %I is '%s';$f$,_tn,_table_comments));
+  _rtn := concat(_rtn,chr(10),chr(10),'--Indexes DDL:',chr(10),_indices_ddl);
 
   return _rtn;
 end;
