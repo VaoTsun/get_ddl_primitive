@@ -106,6 +106,7 @@ end;
 $$ language plpgsql
 ;
 
+
 create or replace function get_ddl_t(_sn text default 'public', _tn text default '', _opt json default '{}') returns text as 
 $$
 declare
@@ -134,7 +135,7 @@ begin
         , pg_catalog.format_type(a.atttypid, a.atttypmod)
         , ' '
         , (
-          SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128)
+          SELECT concat('DEFAULT ',substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128))
           FROM pg_catalog.pg_attrdef d
           WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef
         )
@@ -163,3 +164,4 @@ begin
 end;
 $$ language plpgsql
 ;
+
