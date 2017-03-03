@@ -1,7 +1,7 @@
 # get_ddl_primitive
 Postgres primitives to get DDL when `pg_dump -s` is impossible
 Basics:
-* SQL is mostly borrowd from `\d+` metacommand of psql, thus lots of excessive columns, not used in code
+* SQL is mostly borrowd from `\d+` metacommand of `psql -E`, thus lots of excessive columns, not used in code
 * pg_dump -s requires `LOCK TABLE ... IN ACCESS SHARE MODE`, so Eg. in AWS you can \d+ the table structure without being an owner, but can't pg_dump -s it to get DDL
 * never tested - comes as is
 
