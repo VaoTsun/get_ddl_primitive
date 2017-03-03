@@ -10,8 +10,9 @@ Prior:
 * http://stackoverflow.com/questions/1884758/generate-ddl-programmatically-on-postgresql
 * http://stackoverflow.com/questions/6024108/export-a-create-script-for-a-database-from-pgadmin
 
-Usage example: 
-```t=# drop table "aA";
+#Usage example: 
+```
+t=# drop table "aA";
 DROP TABLE
 t=# \pset format unaligned
 Output format is unaligned.
