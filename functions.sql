@@ -17,7 +17,6 @@ end;
 $$ language plpgsql
 ;
 
-
 create or replace function get_ddl_seq_tbl (_sn text default 'public', _tn text default '', _opt json default '{}') returns text as 
 $$
 declare
@@ -73,6 +72,7 @@ begin
 end;
 $$ language plpgsql
 ;
+
 create or replace function get_ddl_idx_tbl (_sn text default 'public', _tn text default '', _opt json default '{}') returns text as 
 $$
 declare
@@ -163,4 +163,3 @@ begin
 end;
 $$ language plpgsql
 ;
-
