@@ -1,6 +1,6 @@
 
 
-select * from get_ddl_t('public','pond_search_trace2');
+select * from get_ddl_t('public','aA');
 
 
 drop table "aA";
@@ -21,10 +21,10 @@ create table bin."cOne" (i int[],"mixedCaseEvil" oid);
 --https://www.postgresql.org/docs/current/static/catalog-pg-depend.html
 
 /* -- Skipped:
-  ALTER TABLE pond_search_trace2 OWNER TO scott;
-  ALTER TABLE pond_search_trace2_objectid_seq OWNER TO scott;
-  ALTER SEQUENCE pond_search_trace2_objectid_seq OWNED BY pond_search_trace2.objectid;
-  ALTER TABLE ONLY pond_search_trace2 ALTER COLUMN objectid SET DEFAULT nextval('pond_search_trace2_objectid_seq'::regclass);
+  ALTER TABLE aa OWNER TO scott;
+  ALTER TABLE aa_objectid_seq OWNER TO scott;
+  ALTER SEQUENCE aa_objectid_seq OWNED BY aa.objectid;
+  ALTER TABLE ONLY aa ALTER COLUMN objectid SET DEFAULT nextval('aa_objectid_seq'::regclass);
   Permissions
 
 */
