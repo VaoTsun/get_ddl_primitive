@@ -61,7 +61,8 @@ begin
       when others 
       then 
         if _opt->>'handle exceptions' then
-          raise info '%',SQLERRM;
+          --raise info '%',SQLERRM;
+          _rtn := concat(chr(10),_rtn,'--',SQLSTATE,': ',SQLERRM);
         else
           raise exception '%',concat(SQLSTATE,': ',SQLERRM);
         end if;
@@ -105,7 +106,6 @@ begin
 end;
 $$ language plpgsql
 ;
-
 
 create or replace function get_ddl_t(_sn text default 'public', _tn text default '', _opt json default '{}') returns text as 
 $$
