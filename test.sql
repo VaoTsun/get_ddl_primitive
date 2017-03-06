@@ -21,8 +21,8 @@ create table bin."cOne" (i int[],"mixedCaseEvil" oid);
 --https://www.postgresql.org/docs/current/static/catalog-pg-depend.html
 
 /* -- Skipped:
-  ALTER TABLE aa OWNER TO scott;
-  ALTER TABLE aa_objectid_seq OWNER TO scott;
+  ALTER TABLE aa OWNER TO vao;
+  ALTER TABLE aa_objectid_seq OWNER TO vao;
   ALTER SEQUENCE aa_objectid_seq OWNED BY aa.objectid;
   ALTER TABLE ONLY aa ALTER COLUMN objectid SET DEFAULT nextval('aa_objectid_seq'::regclass);
   Permissions
