@@ -1,3 +1,7 @@
+/*
+
+*/
+
 create or replace function get_ddl_oid (_sn text default 'public', _tn text default '', _opt json default '{}') returns text as 
 $$
 declare
