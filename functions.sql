@@ -1,7 +1,3 @@
-/*
-
-*/
-
 create or replace function get_ddl_oid (_sn text default 'public', _tn text default '', _opt json default '{}') returns text as 
 $$
 declare
@@ -133,7 +129,7 @@ begin
     , string_agg(
       concat(
         chr(9)
-        , a.attname
+        , format('%I',a.attname)
         , ' '
         , pg_catalog.format_type(a.atttypid, a.atttypmod)
         , ' '
